@@ -6,6 +6,15 @@
 
 #include "utils.h"
 
+struct key_list {
+	uint64_t key;
+	struct key_list *next;
+};
+
+struct context {
+	struct key_list *keys;
+};
+
 struct allocation_result {
 	enum result_code code;
 	uint64_t key;

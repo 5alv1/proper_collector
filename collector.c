@@ -7,14 +7,7 @@
 
 #include <sys/random.h>
 
-struct key_list {
-	uint64_t key;
-	struct key_list *next;
-};
 
-struct context {
-	struct key_list *keys;
-};
 
 enum result_code add_key(struct context *ctx, uint32_t key) {
 	struct key_list* key_ = malloc(sizeof(struct key_list));

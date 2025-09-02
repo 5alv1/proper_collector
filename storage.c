@@ -11,11 +11,22 @@ struct research_binary_tree {
 	struct item item;
 };
 
-struct research_binary_tree CACHE[CACHE_SIZE] = {nullptr};
+struct item *CACHE = nullptr;
+uint64_t size;
 
 enum direction {
 	LEFT, RIGHT
 };
+
+void init_() {
+	CACHE = calloc(CACHE_SIZE, sizeof(struct item));
+	size = CACHE_SIZE;
+}
+
+void init(uint64_t cache_size) {
+	CACHE = calloc(cache_size, sizeof(struct item));
+	size = cache_size;
+}
 
 struct research_binary_tree *root = nullptr;
 
@@ -24,11 +35,11 @@ struct result get_item(uint64_t key) {
 	struct result res;
 
 	uint64_t index = key % CACHE_SIZE;
-	struct research_binary_tree node = CACHE[index];
+	struct item node = CACHE[index];
 
-	if (node.item.key == key) {
+	if (node.key == key) {
 		res.item.key = key;
-		res.item.ptr = node.item.ptr;
+		res.item.ptr = node.ptr;
 		res.code = SUCCESS;
 
 		return res;
@@ -40,6 +51,8 @@ struct result get_item(uint64_t key) {
 		if (current->item.key == key) {
 			res.item = current->item;
 			res.code = SUCCESS;
+
+			CACHE[key%CACHE_SIZE] = res.item;
 			return res;
 		}
 
@@ -52,8 +65,7 @@ struct result get_item(uint64_t key) {
 	}
 
 	res.code = FAILURE;
-	res.item.key = -1;
-	res.item.ptr = nullptr;
+	res.item = {nullptr};
 
 	return res;
 }
@@ -116,21 +128,39 @@ void swap_tree_nodes(
 }
 
 enum result_code delete_item(uint64_t key) {
+	struct research_binary_tree **debug = &root;
 
 	struct research_binary_tree *curr = root;
 	struct research_binary_tree *parent = nullptr;
+	enum direction dir = LEFT;
 
 	while (curr != nullptr && curr->item.key != key) {
 		if (key < curr->item.key) {
+			parent = curr;
+			dir = LEFT;
 			curr = curr->left;
 			continue;
 		}
 
+		parent = curr;
+		dir = RIGHT;
 		curr = curr->right;
 	}
 
 	if (curr == nullptr) {
 		return FAILURE;
+	}
+
+	if (curr->right == nullptr && curr->left == nullptr) {
+		switch (dir) {
+			case LEFT:
+				parent->left = nullptr;
+				break;
+			case RIGHT:
+				parent->right = nullptr;
+		}
+		free(curr);
+		return SUCCESS;
 	}
 
 	parent = curr;

@@ -3,6 +3,7 @@ project(proper_collector C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_library(proper_collector STATIC library.c
+add_library(proper_collector STATIC collector.c
         storage.h
-        storage.c)
+        storage.c
+        utils.h)

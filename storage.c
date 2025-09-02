@@ -38,8 +38,7 @@ struct result get_item(uint64_t key) {
 	struct item node = CACHE[index];
 
 	if (node.key == key) {
-		res.item.key = key;
-		res.item.ptr = node.ptr;
+		res.item = node;
 		res.code = SUCCESS;
 
 		return res;
@@ -73,10 +72,6 @@ struct result get_item(uint64_t key) {
 enum result_code store_item(struct item item) {
 	struct research_binary_tree *node = calloc(1, sizeof(struct research_binary_tree));
 	node->item = item;
-
-	if (nullptr == node) {
-		return FAILURE;
-	}
 
 	if (root == nullptr) {
 		root = node;

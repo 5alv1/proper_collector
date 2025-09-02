@@ -6,17 +6,8 @@
 #define STORAGE_H
 #include <stdint.h>
 
-#include "library.h"
-
-struct item {
-	uint64_t key;
-	void *ptr;
-};
-
-enum result_code {
-	SUCCESS,
-	FAILURE
-};
+#include "collector.h"
+#include "utils.h"
 
 struct result {
 	enum result_code code;

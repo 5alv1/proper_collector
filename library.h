@@ -1,6 +1,0 @@
-#ifndef PROPER_COLLECTOR_LIBRARY_H
-#define PROPER_COLLECTOR_LIBRARY_H
-
-void hello(void);
-
-#endif //PROPER_COLLECTOR_LIBRARY_H

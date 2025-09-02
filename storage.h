@@ -20,7 +20,7 @@ enum result_code {
 
 struct result {
 	enum result_code code;
-	struct item *item;
+	struct item item;
 };
 
 struct result get_item(uint64_t key);

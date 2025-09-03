@@ -45,7 +45,7 @@ struct allocation_result gc_alloc(struct context *ctx, uint32_t size_) {
 	}
 
 	region->size = size;
-	region->reference_count = 1;
+	region->scope_count = 1;
 	region->region = malloc(region->size);
 
 	if (region->region == nullptr) {
@@ -90,9 +90,9 @@ enum result_code clear_scope(struct context *ctx) {
 		}
 
 		struct region *r = res.item.ptr;
-		r->reference_count--;
+		r->scope_count--;
 
-		if (r->reference_count != 0) {
+		if (r->scope_count != 0) {
 			struct key_list *tmp = curr;
 			curr = curr->next;
 			free(tmp);
@@ -123,7 +123,7 @@ enum result_code add_to_scope(struct context *ctx, uint64_t key) {
 	}
 
 	struct region *r = res.item.ptr;
-	r->reference_count++;
+	r->scope_count++;
 
 	add_key(ctx, key);
 	return SUCCESS;
@@ -163,6 +163,8 @@ int main(void) {
 	init_();
 
 	struct context ctx = {nullptr};
+	struct context ctx2 = {nullptr};
+
 	uint64_t key = 0;
 	struct allocation_result res = gc_alloc(&ctx, 23);
 
@@ -171,6 +173,8 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 	key = res.key;
+	add_to_scope(&ctx2, key);
+
 	write_to(key, "CIAO", strlen("CIAO"));
 
 	char buf[23];

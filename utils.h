@@ -8,7 +8,7 @@ struct item {
 
 struct region {
 	uint64_t size;
-	uint64_t reference_count;
+	uint64_t scope_count;
 	void *region;
 };
 

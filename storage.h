@@ -20,4 +20,6 @@ enum result_code store_item(struct item item);
 
 enum result_code delete_item(uint64_t key);
 
+void init_();
+
 #endif //STORAGE_H

@@ -1,5 +1,6 @@
 #include "storage.h"
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef CACHE_SIZE
 #define CACHE_SIZE 64
@@ -64,8 +65,8 @@ struct result get_item(uint64_t key) {
 	}
 
 	res.code = FAILURE;
-	res.item = {nullptr};
-
+	memset(&res.item, 0, sizeof(res.item));
+	
 	return res;
 }
 
@@ -147,6 +148,12 @@ enum result_code delete_item(uint64_t key) {
 	}
 
 	if (curr->right == nullptr && curr->left == nullptr) {
+		if (curr == root) {
+			root = nullptr;
+			free(curr);
+
+			return SUCCESS;
+		}
 		switch (dir) {
 			case LEFT:
 				parent->left = nullptr;

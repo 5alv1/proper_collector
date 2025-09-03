@@ -9,7 +9,7 @@
 
 
 
-enum result_code add_key(struct context *ctx, uint32_t key) {
+enum result_code add_key(struct context *ctx, uint64_t key) {
 	struct key_list* key_ = malloc(sizeof(struct key_list));
 	if (key_ == nullptr) {
 		return FAILURE;
@@ -54,7 +54,7 @@ struct allocation_result gc_alloc(struct context *ctx, uint32_t size_) {
 		return result;
 	}
 
-	enum result_type tmp = add_key(ctx, key);
+	enum result_code tmp = add_key(ctx, key);
 	if (tmp != SUCCESS) {
 		result.code = FAILURE;
 		free(region->region);
@@ -157,24 +157,31 @@ uint32_t read_from(uint64_t key, void *dst, uint32_t size) {
 	return size;
 }
 
+#define MAIN
 #ifdef MAIN
 int main(void) {
+	init_();
 
-	struct item item;
-	item.ptr = nullptr;
-	item.key = 69;
+	struct context ctx = {nullptr};
+	uint64_t key = 0;
+	struct allocation_result res = gc_alloc(&ctx, 23);
 
-	store_item(item);
+	if (res.code != SUCCESS) {
+		perror("Allocation failed");
+		exit(EXIT_FAILURE);
+	}
+	key = res.key;
+	write_to(key, "CIAO", strlen("CIAO"));
 
-	item.key = 75;
-	store_item(item);
+	char buf[23];
 
-	item.key = 72;
-	store_item(item);
+	read_from(key, buf, 23);
 
-	item.key = 76;
-	store_item(item);
+	printf("%s\n", buf);
+	clear_scope(&ctx);
 
-	delete_item(75);
+	read_from(key, buf, 23);
+	printf("%s\n", buf);
+
 }
 #endif

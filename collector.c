@@ -157,35 +157,26 @@ uint32_t read_from(uint64_t key, void *dst, uint32_t size) {
 	return size;
 }
 
-#define MAIN
-#ifdef MAIN
-int main(void) {
+#ifdef PERFORMANCE_TEST
+int main(int argc, char *argv[]) {
 	init_();
+	int count = atoi(argv[1]);
+	int fails = 0;
 
-	struct context ctx = {nullptr};
-	struct context ctx2 = {nullptr};
+	for (int i = 0; i < count; i++) {
+		struct item item = {0};
+		uint64_t key;
 
-	uint64_t key = 0;
-	struct allocation_result res = gc_alloc(&ctx, 23);
+		getrandom(&key, 8, GRND_NONBLOCK);
+		item.key = key;
 
-	if (res.code != SUCCESS) {
-		perror("Allocation failed");
-		exit(EXIT_FAILURE);
+		enum result_code r = store_item(item);
+		if (r != SUCCESS) {
+			i--;
+			fails++;
+		}
 	}
-	key = res.key;
-	add_to_scope(&ctx2, key);
 
-	write_to(key, "CIAO", strlen("CIAO"));
-
-	char buf[23];
-
-	read_from(key, buf, 23);
-
-	printf("%s\n", buf);
-	clear_scope(&ctx);
-
-	read_from(key, buf, 23);
-	printf("%s\n", buf);
-
+	printf("%lu\n%d\n", get_height_(), fails);
 }
 #endif

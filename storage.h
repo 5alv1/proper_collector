@@ -21,5 +21,9 @@ enum result_code store_item(struct item item);
 enum result_code delete_item(uint64_t key);
 
 void init_();
+void init(uint64_t);
 
+#ifdef PERFORMANCE_TEST
+uint64_t get_height_(void);
+#endif
 #endif //STORAGE_H

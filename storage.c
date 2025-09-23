@@ -181,3 +181,24 @@ enum result_code delete_item(uint64_t key) {
 
 	return  SUCCESS;
 }
+
+#ifdef PERFORMANCE_TEST
+uint64_t get_height(struct research_binary_tree *tree) {
+	if (tree == nullptr) {
+		return 0;
+	}
+
+	uint64_t right_height = get_height(tree->right) + 1;
+	uint64_t left_height = get_height(tree->left) + 1;
+
+	if (left_height > right_height) {
+		return left_height;
+	}
+
+	return right_height;
+}
+
+uint64_t get_height_(void) {
+	return get_height(root);
+}
+#endif

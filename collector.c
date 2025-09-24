@@ -36,7 +36,8 @@ struct allocation_result gc_alloc(struct context *ctx, uint32_t size_) {
 #ifdef __linux__
 	ssize_t err = getrandom(&key, 8, GRND_NONBLOCK);
 #else
-	ssize_t err = rand();
+	ssize_t err = 0;
+	key = rand();
 #endif
 
 	if (err < 0) {

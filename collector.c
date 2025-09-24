@@ -5,8 +5,9 @@
 
 #include "storage.h"
 
+#ifdef __linux__
 #include <sys/random.h>
-
+#endif
 
 
 enum result_code add_key(struct context *ctx, uint64_t key) {
@@ -32,7 +33,12 @@ struct allocation_result gc_alloc(struct context *ctx, uint32_t size_) {
 		return result;
 	}
 
+#ifdef __linux__
 	ssize_t err = getrandom(&key, 8, GRND_NONBLOCK);
+#else
+	ssize_t err = rand();
+#endif
+
 	if (err < 0) {
 		result.code = FAILURE;
 		return result;
